@@ -55,41 +55,17 @@ In a room of 23 people, there is a ~50% chance that two people will share a birt
 ```{r}
 participants_df = 
   tibble(
-    file_name = list.files(path = "data")
+    file_name = list.files(path = "data", full.names = TRUE)
     ) 
-
-#|> 
-#  mutate(
-#   file_name = str_replace(file_name, ".csv", " "))
 ```
 
 ## Iterate over file names and read in data for each participant 
 
 ```{r}
-#participants_df |> 
-#  mutate(
- #   data = map(file_name, data_import))
-```
-
-```{r}
-data_import = 
-  read_csv("data/con_01.csv") |> 
-  janitor::clean_names() |> 
-  pivot_longer(
-    week_1:week_8,
-    names_to = "week", 
-    values_to = "data"
-  ) |> 
-  mutate(
-    week = str_replace(week, "week_", " "))
-```
-
-
-```{r}
-data_import = function() {
+data_import = function(file) {
   
   data_df = 
-    read_csv("data") |> 
+    read_csv(file = file) |> 
     janitor::clean_names() |> 
     pivot_longer(
       week_1:week_8,
@@ -97,14 +73,32 @@ data_import = function() {
       values_to = "data"
       ) |> 
     mutate(
-      week = str_replace(week, "week_", " "))
+      week = str_replace(week, "week_", ""))
   
   return(data_df)
   }
 ```
 
+```{r message = F}
+participants_df =
+  participants_df |> 
+  mutate(
+    data = map(file_name, data_import)) |> 
+  unnest() 
+```
 
+## Tidy the result 
 
+```{r}
+participants_df =
+  participants_df |> 
+   mutate(
+     file_name = str_replace(file_name, ".csv", ""), 
+     file_name = str_replace(file_name, "data/", "")
+   )
+```
+
+## Make a spaghetti plot showing observations of each subject over time
 
 
 
