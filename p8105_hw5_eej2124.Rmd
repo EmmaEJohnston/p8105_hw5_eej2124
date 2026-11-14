@@ -73,7 +73,8 @@ data_import = function(file) {
       values_to = "data"
       ) |> 
     mutate(
-      week = str_replace(week, "week_", ""))
+      week = str_replace(week, "week_", ""), 
+      week = as.numeric(week))
   
   return(data_df)
   }
@@ -94,13 +95,19 @@ participants_df =
   participants_df |> 
    mutate(
      file_name = str_replace(file_name, ".csv", ""), 
-     file_name = str_replace(file_name, "data/", "")
-   )
+     file_name = str_replace(file_name, "data/", ""), 
+     subject_id = file_name
+   ) |> 
+  separate(file_name, into = c("arm", "id"), sep = "_")
 ```
 
 ## Make a spaghetti plot showing observations of each subject over time
 
+```{r}
+participants_df |> 
+  ggplot(aes(x = week, y = data, group = subject_id, color = arm)) +
+  geom_line()
+```
 
-
-
+The observations of participants in the experimental arm of the study have higher data points than the control arm. Additionally, there seems to be a slight increasing trend in the experimental group over the 8 weeks of observation. 
 
