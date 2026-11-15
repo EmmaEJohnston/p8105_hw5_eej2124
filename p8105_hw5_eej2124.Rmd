@@ -18,7 +18,14 @@ set.seed(1)
 ## Write a function to assess birthday overlap in a room of `n` people. 
 
 ```{r}
-source("source/birthday_overlap.R")
+birthday_overlap = function(n_room) {
+  
+  birthdays = sample(1:365, size = n_room, replace = TRUE) 
+  
+  birthday_overlap = length(unique(birthdays)) < n_room 
+  
+  return(birthday_overlap)
+}
 ```
 
 ## Run the function 10,000 times for group sizes of 2 - 50 people. 
@@ -177,9 +184,9 @@ t_test_results_df |>
   )
 ```
 
-As the effect size increases, along with the true value of mu, the proportion of times the null was rejected, or the power, also increases. Once the true value of mu = 4, the null was rejected almost 100% of the time. 
+As the effect size increases along with the true value of mu, the proportion of times the null was rejected, or the power, also increases. Once the true value of mu = 4, the null was rejected almost 100% of the time. At this point, the trend plateaus. 
 
-## True value of mu vs. average estimates of mu plots 
+## True value of mu vs. average estimates of mu  
 
 ```{r}
 avg_mu_estimates_df = 
@@ -192,10 +199,26 @@ avg_mu_estimates_df =
   pivot_longer(
     all_avg_estimates:rejected_avg_estimates, 
     names_to = "sample", 
-    values_to = "average estimate"
+    values_to = "avg_estimate"
   )
 ```
 
+## Plotting the resutls  
+
+```{r}
+avg_mu_estimates_df |> 
+  ggplot(aes(x = mu, y = avg_estimate, color = sample)) +
+  geom_point() +
+  geom_line() +
+  labs(
+    x = "True value of mu",
+    y = "Average estimate of mu^",
+    color = "Sample type",
+    title = "Average estimate of mu^ vs. true mu"
+  )
+```
+
+Average estimates of mu^ among tests that rejected the null tend to be larger when the true value of mu is smaller. This indicates there may be systemic overestimation of the true effect in these studies.  However, once the true value of mu reaches ~4, the sample average of mu^ for tests in which the null was rejected is approximately equal to the true value of mu. 
 
 
 
