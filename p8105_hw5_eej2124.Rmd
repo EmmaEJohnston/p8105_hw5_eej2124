@@ -159,3 +159,45 @@ t_test_results_df =
   unnest(results)
 ```
 
+## True value of mu vs. power of the test plot 
+
+```{r}
+t_test_results_df |> 
+  group_by(mu) |> 
+  summarize(
+    power = mean(p.value < 0.05)
+  ) |> 
+  ggplot(aes(x = mu, y = power)) + 
+  geom_point() +
+  geom_line() +
+  labs(
+    x = "True value of mu",
+    y = "Power (proportion of times the null was rejected)",
+    title = "Power of one-sample t-test by effect size"
+  )
+```
+
+As the effect size increases, along with the true value of mu, the proportion of times the null was rejected, or the power, also increases. Once the true value of mu = 4, the null was rejected almost 100% of the time. 
+
+## True value of mu vs. average estimates of mu plots 
+
+```{r}
+avg_mu_estimates_df = 
+  t_test_results_df |> 
+  group_by(mu) |> 
+  summarize( 
+    all_avg_estimates = mean(estimate), 
+    rejected_avg_estimates = mean(estimate[p.value < 0.05])
+    ) |> 
+  pivot_longer(
+    all_avg_estimates:rejected_avg_estimates, 
+    names_to = "sample", 
+    values_to = "average estimate"
+  )
+```
+
+
+
+
+
+
