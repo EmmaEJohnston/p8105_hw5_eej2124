@@ -9,6 +9,10 @@ output: github_document
 library(tidyverse)
 ```
 
+```{r}
+set.seed(1)
+```
+
 # Problem 1 
 
 ## Write a function to assess birthday overlap in a room of `n` people. 
@@ -113,34 +117,45 @@ The observations of participants in the experimental arm of the study have highe
 
 # Problem 3 
 
-
-```{r}
-power_df = 
-  tibble(
-    x = rnorm(30, mean = 0, sd = 5)
-  )
-```
-
-```{r}
-power_df = 
-  expand_grid(
-    iter = 5000
-  ) #|> 
- # mutate( 
-  #  )
-```
-
-I don't know which approach to use... above or below. 
+## Exploring power using a function 
 
 ```{r}
 t_test_power = function(n = 30, mu = 0, sigma = 5) {
   
-  dataset = 
-  tibble(
-    x = rnorm(mu, sigma)
-  )
-
+  x = rnorm(n = n, mean = mu, sd = sigma)
+  
+  t.test(x, mu = 0) |> 
+    broom::tidy() |> 
+    select(estimate, p.value)
   
 }
+```
+
+## Generate 5000 datasets 
+
+```{r}
+t_test_results_df =  
+  expand_grid(
+    mu = 0,
+    iter = 1:5000
+  ) |> 
+  mutate(
+    results = map(mu, \(m) t_test_power(n = 30, mu = m, sigma = 5))
+  ) |> 
+  unnest(results)
+```
+
+## Repeating when mu = 1:6 
+
+```{r}
+t_test_results_df =  
+  expand_grid(
+    mu = 1:6,
+    iter = 1:5000
+  ) |> 
+  mutate(
+    results = map(mu, \(m) t_test_power(n = 30, mu = m, sigma = 5))
+  ) |> 
+  unnest(results)
 ```
 
