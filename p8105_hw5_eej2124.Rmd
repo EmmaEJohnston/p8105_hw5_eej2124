@@ -203,7 +203,7 @@ avg_mu_estimates_df =
   )
 ```
 
-## Plotting the resutls  
+## Plotting the results  
 
 ```{r}
 avg_mu_estimates_df |> 
@@ -218,7 +218,7 @@ avg_mu_estimates_df |>
   )
 ```
 
-Average estimates of mu^ among tests that rejected the null tend to be larger when the true value of mu is smaller. This indicates there may be systemic overestimation of the true effect in these studies.  However, once the true value of mu reaches ~4, the sample average of mu^ for tests in which the null was rejected is approximately equal to the true value of mu. 
+Among all samples, the average estimate of mu^ is approximately equal to the true mu. However, among tests that rejected the null, the average estimate of mu^ tend to overestimate the true value of mu. This is especially clear when the true value of mu is smaller.  This is because when the power is lower, only samples with especially large effect sizes are significant. Once mu reaches ~4, the average value of mu^ across tests which rejected the null is approximately equal to the true value of mu because almost all the nulls are rejected when the effect size is that large.  
 
 
 
